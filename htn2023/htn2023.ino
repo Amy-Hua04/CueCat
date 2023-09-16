@@ -18,7 +18,7 @@ const int SPOTIFY = 1;
 const int STOPWATCH = 2;
 const int NUM_STATES = 3;
 
-const utin16_t bg_colour = ILI9341_BLACK;
+const utin16_t bg_colour = uint16_t myColor = ((0xffe5 >> 3) << 11) | ((0xe7 >> 2) << 5) | (0xe7 >> 3);
 
 int state = 0;
 int temp_state = 0;
@@ -42,7 +42,7 @@ MCUFRIEND_kbv tft; // Create an instance of the TFT display
 void setup() {
 
   tft.begin(); // Initialize TFT display
-  tft.setRotation(0); // Set the screen rotation (0, 1, 2, or 3)
+  tft.setRotation(3); // Set the screen rotation (0, 1, 2, or 3)
 
   tft.fillScreen(bg_colour); // Fill the screen with a background color (optional)
 
