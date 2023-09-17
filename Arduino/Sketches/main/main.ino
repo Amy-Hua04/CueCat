@@ -47,14 +47,16 @@ struct Button {
 Button button1;
 Button button2;
 
+const unsigned long debounceDelay = 40;    // Debounce delay in milliseconds
+
 
 uint16_t colormask[] = {BLUE, GREEN, RED};
 
 String x;
 
 void setup() { 
-  button1.pin = 23
-  button2.pin = 25
+  button1.pin = 23;
+  button2.pin = 25;
 
 	Serial.begin(115200); 
 	Serial.setTimeout(1); 
@@ -78,7 +80,9 @@ void setup() {
   }
   delay(2000);
 
-  tft.fillScreen(BLACK);
+  
+  tft.fillScreen(colormask[tempState]);
+  tft.fillRect(0, 0, 200, 50, BLACK); 
 } 
 void loop() { 
   button1.prevReading = button1.currReading;
@@ -102,11 +106,13 @@ void loop() {
     case CYCLE:
       if (isPressed(button1)){
         state = tempState;
-        tft.setTextSize(4);
-        tft.println(state);
-        delay(100);
+        tft.fillScreen(colormask[state]);
+        tft.fillRect(0, 0, 200, 50, BLACK);
         if (state == STOPWATCH){
           elapsedTime = 0;
+        }
+        else if (state == SPOTIFY){
+            Serial.println(1);
         }
       }
       else if (isPressed(button2)){
@@ -114,15 +120,18 @@ void loop() {
         tempState = (tempState + 1) % NUM_STATES;
         tft.fillScreen(colormask[tempState]);
         tft.fillRect(0, 0, 200, 50, BLACK);
+        tft.fillRect(tft.width()-60, 0, 60, tft.height(), GRAY);
+        tft.fillTriangle(tft.width()-40, tft.height()/2-20, tft.width()-40, tft.height()/2+20, tft.width()-20, tft.height()/2, BLACK);
+ 
+
 
       }
       break;
 
     case HOME:
       if (isPressed(button1)) {
-        state = CYCLE;
-        tft.fillScreen(BLACK);
-
+        cycle();
+        break;
 
       }
 
@@ -130,15 +139,17 @@ void loop() {
 
     case SPOTIFY:
       if (isPressed(button2)) {
-        state = CYCLE;
-        tft.fillScreen(BLACK);
-
-
-        
+        cycle();
+        break;
       }
+      x = Serial.readString(); 
+      tft.setCursor(0, 70);
+      tft.setTextSize(2);
+      tft.setTextColor(BLACK); 
+      tft.print(x);
 
       //tft.drawBMP(coverImg, 10, 30) //insert cover image later
-      //insert song and artist info
+      //insert song and artist info 
 
       break;
 
@@ -146,8 +157,7 @@ void loop() {
       int b = checkButton();
       if (isPressed(button1)){
           paused = true;
-          state = CYCLE;
-          tft.fillScreen(BLACK);
+          cycle();
           break;
 
       } 
@@ -165,7 +175,7 @@ void loop() {
       }
       tft.setTextColor(WHITE); // Set text color
       tft.setTextSize(4); // Set text size 
-      tft.setCursor(10, 10); // Set text cursor position
+      tft.setCursor(10, 100); // Set text cursor position
       tft.println(elapsedTime);
 
       break;
@@ -199,7 +209,7 @@ boolean holdEventPast = false;    // whether or not the hold event happened alre
 
 int checkButton() {    
    int event = 0;
-   buttonVal = digitalRead(button2);
+   buttonVal = digitalRead(button2.pin);
    // Button pressed down
    if (buttonVal == LOW && buttonLast == HIGH && (millis() - upTime) > debounce)
    {
@@ -278,5 +288,12 @@ void increment_timer() {
     elapsedTime += (currentTime - startTime);
     startTime = currentTime;
   }
+}
+
+void cycle(){
+  state = CYCLE;
+  tft.fillRect(tft.width()-60, 0, 60, tft.height(), GRAY); 
+  tft.fillTriangle(tft.width()-40, tft.height()/2-20, tft.width()-40, tft.height()/2+20, tft.width()-20, tft.height()/2, BLACK);
+
 }
 

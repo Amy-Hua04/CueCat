@@ -20,20 +20,26 @@ sp_oauth = SpotifyOAuth(client_id=os.getenv('CLIENT_ID'),
 
 sp = Spotify(auth_manager=sp_oauth)
 
-results = sp.current_user_playing_track()
-
-if results:
-	arduino.write(bytes(results["item"]["name"] + "\n", 'utf-8'))
-	arduino.write(bytes(results["item"]["artists"][0]["name"], 'utf-8'))
-	time.sleep(0.05) 
-
-else:
-	arduino.write(bytes("Not Playing", 'utf-8'))
-
-	time.sleep(0.05)
-	data = arduino.readline()
 
 
+while True:
+	
+	data = str(arduino.readline(), encoding='utf-8')
+
+	if data.strip() == "1":
+		data = 0
+		results = sp.current_user_playing_track()
+
+		if results:
+			arduino.write(bytes(results["item"]["name"] + "\n", 'utf-8'))
+			arduino.write(bytes(results["item"]["artists"][0]["name"], 'utf-8'))
+
+		else:
+			arduino.write(bytes("Not Playing", 'utf-8'))
+
+
+
+		
 # def write_read(x): 
 # 	   arduino.write(bytes(x, 'utf-8')) 
 # 	   time.sleep(0.05) 
