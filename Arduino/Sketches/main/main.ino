@@ -92,7 +92,7 @@ void loop() {
   button1.prevReading = button1.currReading;
   button2.prevReading = button2.currReading;
   button1.currReading = digitalRead(button1.pin);
-  button2.currReading = digitalRead(button2.pin)
+  button2.currReading = digitalRead(button2.pin);
 
   int width = tft.width();
   int height = tft.height();
@@ -140,11 +140,11 @@ void loop() {
         break;
       }
 
-      tft.drawRec(50,100,220,270,PURPLE);
-      tft.drawRec(53,103,217,267,WHITE);
-      tft.setCursor(90,160)
-      tft.setTextColor(PURPLE)
-      tft.print(">:D")
+      tft.drawRect(50,100,220,270,PURPLE);
+      tft.drawRect(53,103,217,267,WHITE);
+      tft.setCursor(90,160);
+      tft.setTextColor(PURPLE);
+      tft.print(">:D");
 
       tft.setCursor(53,53);
       tft.setTextSize(15);
