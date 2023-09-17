@@ -1,0 +1,153 @@
+@font-face {
+    font-family: "Inter-Variable";
+    src: url("../public/Inter-VariableFont_slnt,wght.ttf") format("truetype");
+    font-weight: 300 400 500 600 700 800 900;
+    font-display: swap;
+    font-style: normal;
+  }
+  
+  .header{
+    font-family: "Inter-Variable";
+    margin-top: 0px;
+    padding-top: 100px;
+    font-size: 120px;
+    color: #1D1E21;
+    text-transform: uppercase;
+    padding-left: 50px;
+    margin-bottom: 20px;
+  }
+
+  .description{
+    font-family: "Inter-Variable";
+    padding-left: 120px;
+    font-size: 30px;
+    width: 550px;
+    color: #80879A;
+
+  }
+  
+  .login{
+    font-family: "Inter-Variable";
+    position: absolute;
+    left: 57%;
+    top: 40%;
+    padding: 10px;
+    background-color: lightgray;
+    border: none;
+    font-size: 20px;
+    width:350px;
+  }
+
+  .create{
+    font-family: "Inter-Variable";
+    padding: 10px;
+    background-color: lightgray;
+    border: none;
+    font-size: 15px;
+    width:250px;
+  }
+
+  .background{
+    /* background-color: #F4ECED; */
+    height: 100dvh;
+    position: relative;
+  }
+  .date{
+    font-family: "Inter-Variable";
+    margin-top: 0px;
+    padding-top: 20px;
+    padding-left: 20px;
+    font-size: 45px;
+    color: #1D1E21;
+    text-transform:uppercase;
+
+  }
+
+  .container{
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .create{
+    height: 35px;
+    margin-top: 25px;
+    margin-right: 45px;
+  }
+  
+ 
+
+  .event{
+    background-color: #F1C7D3;
+    text-align: center;
+  }
+
+  /* index.module.css */
+
+.eventList {
+  list-style-type: none;
+  padding: 0;
+  font-family: "Inter-Variable";
+  color: #1D1E21;
+
+}
+
+.eventBlock {
+  background-color: #939AAD;
+  padding: 10px;
+  margin-bottom: 30px;
+  width: 800px;
+  margin-left: 150px;
+
+  
+}
+
+.eventDetails {
+  margin-top: 5px;
+}
+
+.eventTime {
+  font-weight: bold;
+}
+
+.eventLocation {
+  color: #666;
+}
+
+/* index.module.css */
+
+
+.contain{
+  display: flex;
+}
+
+/* index.module.css */
+
+.eventContainer {
+  width: 1450px; /* Adjust the height as needed */
+  overflow-x: scroll;
+}
+
+.label{
+  padding-bottom: 20px;
+}
+.input{
+  font-family: "Inter-Variable";
+  margin-left: 100px;
+}
+
+.sub{
+  font-family: "Inter-Variable";
+
+}
+.close{
+  font-family: "Inter-Variable";
+
+}
+
+.window{
+  display: flex;
+  justify-content: space-between;
+  height: 30px;
+  margin-bottom: 40px;
+}
+
