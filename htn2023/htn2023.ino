@@ -18,10 +18,10 @@ const int SPOTIFY = 1;
 const int STOPWATCH = 2;
 const int NUM_STATES = 3;
 
-const utin16_t bgColour = ((0xffe5 >> 3) << 11) | ((0xe7 >> 2) << 5) | (0xe7 >> 3);
-const utin16_t BLACK = 0x0000;
+const uint16_t bgColour = ((0xffe5 >> 3) << 11) | ((0xe7 >> 2) << 5) | (0xe7 >> 3);
+const uint16_t BLACK = 0x0000;
 
-int state = 0;
+int state = STOPWATCH;
 int tempState = 0;
 
 unsigned long startTime = 0; // Variable to store the start time
@@ -56,7 +56,7 @@ void setup() {
   tft.setTextColor(BLACK); // Set text color
   tft.setTextSize(2); // Set text size 
   tft.setCursor(10, 10); // Set text cursor position
-  tft.println("Hello!"); // Print text on the screen
+  tft.println("Hello!\n I'm CueCat"); // Print text on the screen
   delay(4000);
   // You can also draw shapes and graphics here
 }
