@@ -23,7 +23,6 @@ sp = Spotify(auth_manager=sp_oauth)
 
 
 while True:
-	
 	data = str(arduino.readline(), encoding='utf-8')
 
 	if data.strip() == "1":
@@ -37,7 +36,10 @@ while True:
 		else:
 			arduino.write(bytes("No Song Found", 'utf-8'))
 
-
+		
+		
+		# time_lapsed = 
+		# time_convert(time_lapsed)
 
 		
 # def write_read(x): 
