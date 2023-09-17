@@ -313,17 +313,21 @@ void loop() {
           cycle();
           break;
 
-        } else{
-          tft.fillScreen(colormask[state]);
-          tft.setCursor(200, 10);
-          tft.setTextSize(4);
-          tft.print(statenames[state]);
-          tft.println();
-          timed +=1;
-       
-          String timeOut= String(timed);
-          tft.print("Time elapsed: " + timeOut + "s. ");
-          delay(1000);
+        } else if (isPressed(button2)){
+          timed = 0;
+        }
+        
+        else{
+        tft.fillScreen(colormask[state]);
+        tft.setCursor(200, 10);
+        tft.setTextSize(4);
+        tft.print(statenames[state]);
+        tft.println();
+        timed +=1;
+      
+        String timeOut= String(timed);
+        tft.print("Time elapsed: " + timeOut + "s. ");
+        delay(1000);
           // Serial.println(2);
           // x = Serial.readString();
 

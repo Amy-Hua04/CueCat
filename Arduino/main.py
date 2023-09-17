@@ -31,24 +31,10 @@ while True:
 
 		if results:
 			arduino.write(bytes(results["item"]["name"] + "\n", 'utf-8'))
-			arduino.write(" By: "+ bytes(results["item"]["artists"][0]["name"], 'utf-8'))
+			arduino.write(bytes( "By: "+results["item"]["artists"][0]["name"], 'utf-8'))
 
 		else:
 			arduino.write(bytes("No Song Found", 'utf-8'))
 
 		
 		
-		# time_lapsed = 
-		# time_convert(time_lapsed)
-
-		
-# def write_read(x): 
-# 	   arduino.write(bytes(x, 'utf-8')) 
-# 	   time.sleep(0.05) 
-# 	   data = arduino.readline() 
-# 	   return data 
-
-
-# 	   num = input("Enter a number: ") # Taking input from user 
-# 	   value = write_read(num) 
-# 	   print(value) # printing the value 
