@@ -1,19 +1,17 @@
 #include <MCUFRIEND_kbv.h>
+#include<math.h>
+
 MCUFRIEND_kbv tft;
 
 #define BLACK   0x0000
-#define PINK    0xf7dedc
-#define LIGHT_BLUE 0xdcf1f7
-#define LIGHT_GREEN 0xe1f5d3
-#define BLUE    0x3e499e
-#define RED     0xc44537
-#define GREEN   0x49a83e
+#define BLUE    0x001F
+#define RED     0xF800
+#define GREEN   0x07E0
 #define CYAN    0x07FF
 #define MAGENTA 0xF81F
 #define YELLOW  0xFFE0
 #define WHITE   0xFFFF
 #define GRAY    0x8410
-#define PURPLE  0xecb7ce
 
 const int CYCLE = -1;
 const int HOME = 0;
@@ -33,7 +31,7 @@ uint16_t version = MCUFRIEND_KBV_H_;
 // int button1PrevState = 0;
 // int button2PrevState = 0;
 
-int state = STOPWATCH;
+int state = HOME;
 int tempState = 0;
 
 unsigned long startTime = 0; // Variable to store the start time
@@ -55,8 +53,24 @@ const unsigned long debounceDelay = 40;    // Debounce delay in milliseconds
 
 
 uint16_t colormask[] = {BLUE, GREEN, RED};
+String statenames[] = {"HOME", "SPOTIFY", "STOPWATCH"};
+
 
 String x;
+String y;
+
+int yCursor = 110;
+
+String reminder = "drink water";
+
+int reminderState = 0;
+
+const int WATER = 0;
+const int FOOD = 1;
+const int EXERCISE = 2;
+uint16_t remindercolor[] = {BLUE, WHITE, RED};
+
+
 
 void setup() { 
   button1.pin = 23;
@@ -76,17 +90,37 @@ void setup() {
   tft.setCursor(10, 10); // Set text cursor position
   char intro[] = {"Hello!\n I'm CueCat"};
   int txtlen = sizeof(intro) -1;
-  // tft.println("Hello!\n I'm CueCat"); // Print text on the screen
   for (int letter = 0; letter < txtlen; letter++)
   {
     tft.print(intro[letter]); //print each letter
     delay(100); //delay for illustration only
   }
-  delay(2000);
+  delay(1000);
+  tft.fillScreen(BLACK);
+  tft.setCursor(0, 50);
+  char cat[] = {"(=*w*=)"}; 
 
-  
+  txtlen = sizeof(cat) -1;
+  tft.setTextSize(10);
+  for (int letter = 0; letter < txtlen; letter++)
+  {
+    tft.print(cat[letter]); //print each letter
+    delay(10); //delay for illustration only
+  }
+  delay(1000);
+  tft.println();
+
+  char dialogue[] = {"MEOW."}; 
+  txtlen = sizeof(dialogue) -1;
+  for (int letter = 0; letter < txtlen; letter++)
+  {
+    tft.print(dialogue[letter]); //print each letter
+    delay(100); //delay for illustration only
+  }
+
+  delay(2000);
   tft.fillScreen(colormask[tempState]);
-  tft.fillRect(0, 0, 200, 50, BLACK); 
+  // tft.fillRect(0, 0, 200, 50, BLACK); 
 } 
 void loop() { 
   button1.prevReading = button1.currReading;
@@ -97,19 +131,24 @@ void loop() {
   int width = tft.width();
   int height = tft.height();
 
-  tft.drawCircle(20, 20, 20, GREEN);
-  tft.drawCircle(70, 20, 20, BLUE);
-  tft.drawCircle(120, 20, 20, WHITE);
-  tft.drawCircle(170, 20, 20, RED);
+  // tft.drawCircle(20, 20, 20, GREEN);
+  // tft.drawCircle(70, 20, 20, BLUE);
+  // tft.drawCircle(120, 20, 20, WHITE);
+  // tft.drawCircle(170, 20, 20, RED);
 
-  tft.fillCircle(20, 20, 20, GREEN);
+  // tft.fillCircle(20, 20, 20, GREEN);
 
+if (reminder == ""){
   switch (state) {
     case CYCLE:
       if (isPressed(button1)){
         state = tempState;
         tft.fillScreen(colormask[state]);
-        tft.fillRect(0, 0, 200, 50, BLACK);
+        tft.setCursor(200, 10);
+        tft.setTextSize(4);
+        tft.print(statenames[tempState]);
+
+        // tft.fillRect(0, 0, 200, 50, BLACK);
         if (state == STOPWATCH){
           elapsedTime = 0;
         }
@@ -121,7 +160,10 @@ void loop() {
         delay(300);
         tempState = (tempState + 1) % NUM_STATES;
         tft.fillScreen(colormask[tempState]);
-        tft.fillRect(0, 0, 200, 50, BLACK);
+        tft.setCursor(200, 10);
+        tft.setTextSize(4);
+        tft.print(statenames[tempState]);
+        // tft.fillRect(0, 0, 200, 50, BLACK);
         tft.fillRect(tft.width()-60, 0, 60, tft.height(), GRAY);
         tft.fillTriangle(tft.width()-40, tft.height()/2-20, tft.width()-40, tft.height()/2+20, tft.width()-20, tft.height()/2, BLACK);
       }
@@ -132,33 +174,56 @@ void loop() {
         cycle();
         break;
       }
+      tft.setCursor(50,60);
+      tft.setTextSize(4);
+      tft.setTextColor(BLACK);
+      tft.print("Sunday, Sep 17");
+
+      tft.setCursor(50,110);
+      tft.setTextSize(3);
+      tft.println("8:00am-10:00am");
+      tft.setCursor(50,140);
+      tft.println("Doing stuffs");
       break;
 
     case SPOTIFY:
-      if (isPressed(button2)) {
+      if (isPressed(button1)) {
         cycle();
         break;
       }
 
-      tft.drawRect(50,100,220,270,PURPLE);
-      tft.drawRect(53,103,217,267,WHITE);
-      tft.setCursor(90,160);
-      tft.setTextColor(PURPLE);
-      tft.print(">:D");
-
-      tft.setCursor(53,53);
-      tft.setTextSize(15);
-      tft.setTextColor(0x401d2b);
-      tft.print("Now Playing");
-      tft.setCursor(50,50);
-      tft.setTextColor(PURPLE);
+      tft.setCursor(50,60);
+      tft.setTextSize(4);
       tft.print("Now Playing");
 
-      x = Serial.readString(); 
-      tft.setCursor(250, 110);
-      tft.setTextSize(10);
-      tft.setTextColor(BLACK); 
+    
+
+      x = Serial.readString();
+
+      // y= Serial.readString(); 
+      // char buffer[200];
+      tft.setTextSize(4);
+      // x.toCharArray(buffer, x.length());
+      tft.setCursor(10, 110);
       tft.print(x);
+  
+
+      // for(int i = 0; i < x.length(); i++){
+      //   tft.setTextColor(BLACK); 
+      //   if (i % 10 == 0){
+      //     yCursor += 20;
+      //     tft.setCursor(230, yCursor);
+      //     tft.print(buffer[i]);
+      //   }
+      //   else{
+      //     tft.print(buffer[i]);
+      //   }
+      // }
+      // tft.setCursor(230, 110);
+
+      // tft.setTextSize(3);
+      // tft.setTextColor(BLACK); 
+      // tft.print(x);
 
       //tft.drawBMP(coverImg, 10, 30) //insert cover image later
       //insert song and artist info 
@@ -192,7 +257,29 @@ void loop() {
 
       break;
   }
+}
+  else{
+    if (isPressed(button1) || isPressed(button2)){
+      tft.fillScreen(colormask[state]);
+      tft.setCursor(200, 10);
+      tft.setTextSize(4);
+      tft.print(statenames[tempState]);
+      reminder = "";
+      
+    }
+    else{
+       tft.fillScreen(remindercolor[reminderState]);
+      // tft.fillRect(50,50,430,270, WHITE);
+      tft.setTextSize(4);
+      tft.setTextColor(BLACK);
+      tft.setCursor(20,100);
+      tft.println("Remember to \n  " + reminder + "!");
+      tft.print("Press any button to return.");
+    }
+   
+  }
 
+  
 // 	while (!Serial.available()); 
 // 	x = Serial.readString(); 
 // 	Serial.println();

@@ -32,10 +32,10 @@ while True:
 
 		if results:
 			arduino.write(bytes(results["item"]["name"] + "\n", 'utf-8'))
-			arduino.write(bytes(results["item"]["artists"][0]["name"], 'utf-8'))
+			arduino.write(" By: "+ bytes(results["item"]["artists"][0]["name"], 'utf-8'))
 
 		else:
-			arduino.write(bytes("Not Playing", 'utf-8'))
+			arduino.write(bytes("No Song Found", 'utf-8'))
 
 
 
