@@ -27,6 +27,8 @@ const int button2 = 25;
 // variables will change:
 int button1State = 0;
 int button2State = 0;
+int button1PrevState = 0;
+int button2PrevState = 0;
 
 int state = STOPWATCH;
 int tempState = 0;
@@ -65,7 +67,8 @@ void setup() {
   tft.fillScreen(BLACK);
 } 
 void loop() { 
-
+  button1PrevState = button1State;
+  button2PrevState = button2State;
   button1State = digitalRead(button1);
   button2State = digitalRead(button2);
 
@@ -82,7 +85,7 @@ void loop() {
 
   switch (state) {
     case CYCLE:
-      if (button1State == HIGH){
+      if (button1State == HIGH && button1PrevState != HIGH){
         state = tempState;
         tft.setTextSize(4);
         tft.println(state);
@@ -91,7 +94,7 @@ void loop() {
           elapsedTime = 0;
         }
       }
-      else if (button2State == HIGH){
+      else if (button2State == HIGH && button2PrevState != HIGH){
         delay(300);
         tempState = (tempState + 1) % NUM_STATES;
         tft.fillScreen(colormask[tempState]);
@@ -152,7 +155,6 @@ void loop() {
 
       break;
   }
-
 
 // 	while (!Serial.available()); 
 // 	x = Serial.readString(); 
