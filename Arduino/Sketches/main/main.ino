@@ -7,12 +7,13 @@ MCUFRIEND_kbv tft;
 #define LIGHT_GREEN 0xe1f5d3
 #define BLUE    0x3e499e
 #define RED     0xc44537
-#define GREEN   0x07E0
+#define GREEN   0x49a83e
 #define CYAN    0x07FF
 #define MAGENTA 0xF81F
 #define YELLOW  0xFFE0
 #define WHITE   0xFFFF
 #define GRAY    0x8410
+#define PURPLE  0xecb7ce
 
 const int CYCLE = -1;
 const int HOME = 0;
@@ -91,8 +92,7 @@ void loop() {
   button1.prevReading = button1.currReading;
   button2.prevReading = button2.currReading;
   button1.currReading = digitalRead(button1.pin);
-  button2.currReading = digitalRead(button2.pin);
-
+  button2.currReading = digitalRead(button2.pin)
 
   int width = tft.width();
   int height = tft.height();
@@ -103,7 +103,6 @@ void loop() {
   tft.drawCircle(170, 20, 20, RED);
 
   tft.fillCircle(20, 20, 20, GREEN);
-
 
   switch (state) {
     case CYCLE:
@@ -125,9 +124,6 @@ void loop() {
         tft.fillRect(0, 0, 200, 50, BLACK);
         tft.fillRect(tft.width()-60, 0, 60, tft.height(), GRAY);
         tft.fillTriangle(tft.width()-40, tft.height()/2-20, tft.width()-40, tft.height()/2+20, tft.width()-20, tft.height()/2, BLACK);
- 
-
-
       }
       break;
 
@@ -135,9 +131,7 @@ void loop() {
       if (isPressed(button1)) {
         cycle();
         break;
-
       }
-
       break;
 
     case SPOTIFY:
@@ -145,9 +139,24 @@ void loop() {
         cycle();
         break;
       }
+
+      tft.drawRec(50,100,220,270,PURPLE);
+      tft.drawRec(53,103,217,267,WHITE);
+      tft.setCursor(90,160)
+      tft.setTextColor(PURPLE)
+      tft.print(">:D")
+
+      tft.setCursor(53,53);
+      tft.setTextSize(15);
+      tft.setTextColor(0x401d2b);
+      tft.print("Now Playing");
+      tft.setCursor(50,50);
+      tft.setTextColor(PURPLE);
+      tft.print("Now Playing");
+
       x = Serial.readString(); 
-      tft.setCursor(0, 70);
-      tft.setTextSize(2);
+      tft.setCursor(250, 110);
+      tft.setTextSize(10);
       tft.setTextColor(BLACK); 
       tft.print(x);
 
