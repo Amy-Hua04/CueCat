@@ -16,19 +16,18 @@ const int HOME = 0;
 const int SPOTIFY = 1;
 const int STOPWATCH = 2;
 
-
 const int NUM_STATES = 3;
 
 uint16_t version = MCUFRIEND_KBV_H_;
 
-const int button1 = 23;  // the number of the pushbutton pin
-const int button2 = 25;
+// const int button1 = 23;  // the number of the pushbutton pin
+// const int button2 = 25;
 
-// variables will change:
-int button1State = 0;
-int button2State = 0;
-int button1PrevState = 0;
-int button2PrevState = 0;
+// // variables will change:
+// int button1State = 0;
+// int button2State = 0;
+// int button1PrevState = 0;
+// int button2PrevState = 0;
 
 int state = STOPWATCH;
 int tempState = 0;
@@ -37,15 +36,30 @@ unsigned long startTime = 0; // Variable to store the start time
 unsigned long elapsedTime = 0; // Variable to store the elapsed time
 bool paused = true;
 
-uint16_t colormask[] = {BLUE, GREEN, RED };
+struct Button {
+  int pin;
+  int currReading = HIGH;
+  int prevReading = HIGH;
+  int currState = HIGH;
+  unsigned long lastDebounceTime = 0;
+};
+
+Button button1;
+Button button2;
+
+
+uint16_t colormask[] = {BLUE, GREEN, RED};
 
 String x;
 
 void setup() { 
+  button1.pin = 23
+  button2.pin = 25
+
 	Serial.begin(115200); 
 	Serial.setTimeout(1); 
-  pinMode(button1, INPUT);
-  pinMode(button2, INPUT);
+  pinMode(button1.pin, INPUT);
+  pinMode(button2.pin, INPUT);
   uint16_t ID = tft.readID();
   tft.begin(ID);
   tft.fillScreen(BLACK);
@@ -67,10 +81,11 @@ void setup() {
   tft.fillScreen(BLACK);
 } 
 void loop() { 
-  button1PrevState = button1State;
-  button2PrevState = button2State;
-  button1State = digitalRead(button1);
-  button2State = digitalRead(button2);
+  button1.prevReading = button1.currReading;
+  button2.prevReading = button2.currReading;
+  button1.currReading = digitalRead(button1.pin);
+  button2.currReading = digitalRead(button2.pin);
+
 
   int width = tft.width();
   int height = tft.height();
@@ -85,7 +100,7 @@ void loop() {
 
   switch (state) {
     case CYCLE:
-      if (button1State == HIGH && button1PrevState != HIGH){
+      if (isPressed(button1)){
         state = tempState;
         tft.setTextSize(4);
         tft.println(state);
@@ -94,7 +109,7 @@ void loop() {
           elapsedTime = 0;
         }
       }
-      else if (button2State == HIGH && button2PrevState != HIGH){
+      else if (isPressed(button2)){
         delay(300);
         tempState = (tempState + 1) % NUM_STATES;
         tft.fillScreen(colormask[tempState]);
@@ -104,7 +119,7 @@ void loop() {
       break;
 
     case HOME:
-      if (button1State == HIGH) {
+      if (isPressed(button1)) {
         state = CYCLE;
         tft.fillScreen(BLACK);
 
@@ -114,7 +129,7 @@ void loop() {
       break;
 
     case SPOTIFY:
-      if (button1State == HIGH) {
+      if (isPressed(button2)) {
         state = CYCLE;
         tft.fillScreen(BLACK);
 
@@ -129,7 +144,7 @@ void loop() {
 
     case STOPWATCH:
       int b = checkButton();
-      if (button1State == HIGH){
+      if (isPressed(button1)){
           paused = true;
           state = CYCLE;
           tft.fillScreen(BLACK);
@@ -235,6 +250,25 @@ int checkButton() {
    }
    buttonLast = buttonVal;
    return event;
+}
+
+bool isPressed(Button& button) {
+  if (button.currReading != button.prevReading) {
+    button.lastDebounceTime = millis(); // Save the last time the button state changed
+  }
+
+  if ((millis() - button.lastDebounceTime) > debounceDelay) {
+    // If the button state has been stable for a while, it's a valid press
+    if (button.currState != button.currReading) {
+      button.currState = button.currReading; // Save the current button state
+
+      // Check if the button is pressed (assuming LOW when pressed)
+      if (button.currState == HIGH) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 
