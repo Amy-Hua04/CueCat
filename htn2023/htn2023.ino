@@ -1,13 +1,13 @@
-#include <FreeDefaultFonts.h>
-#include <FreeSevenSegNumFontPlusPlus.h>
+// #include <FreeMonoBoldOblique12pt7b.h>
+// #include <FreeSevenSegNumFontPlusPlus.h>
 
 
-#include <TFT_PRINTGLUE.h>
-#include <UTFTGLUE.h>
+// #include <TFT_PRINTGLUE.h>
+// #include <UTFTGLUE.h>
 
 #include <MCUFRIEND_kbv.h> // Include the MCUFRIEND_kbv library
 
-// //For touch screen
+//For screen
 // #include <Adafruit_GFX.h>
 // #include <Adafruit_ILI9341.h> // Include the Adafruit TFT library
 // #include <Adafruit_TouchScreen.h> // Include the Adafruit TouchScreen library
@@ -18,56 +18,63 @@ const int SPOTIFY = 1;
 const int STOPWATCH = 2;
 const int NUM_STATES = 3;
 
-const utin16_t bg_colour = uint16_t myColor = ((0xffe5 >> 3) << 11) | ((0xe7 >> 2) << 5) | (0xe7 >> 3);
+const utin16_t bgColour = ((0xffe5 >> 3) << 11) | ((0xe7 >> 2) << 5) | (0xe7 >> 3);
+const utin16_t BLACK = 0x0000;
 
 int state = 0;
-int temp_state = 0;
+int tempState = 0;
 
-double time = 0;
+unsigned long startTime = 0; // Variable to store the start time
+unsigned long elapsedTime = 0; // Variable to store the elapsed time
 bool paused = true;
 
-int reading;
 
-const int button1 = 1; //Pin to button1
+struct Button {
+  int pin;
+  int currReading = HIGH;
+  int prevReading = HIGH;
+  int currState = HIGH;
+  unsigned long lastDebounceTime = 0;
+};
 
-const int button2 = 2; // Pin to button2
-int buttonState = HIGH;  // Current state of the button
-int lastButtonState = HIGH; // Previous state of the button
-unsigned long lastDebounceTime = 0;  // Last time the button state changed
-unsigned long debounceDelay = 50;    // Debounce delay in milliseconds
+Button button1;
+Button button2;
 
+const unsigned long debounceDelay = 40;    // Debounce delay in milliseconds
 
 MCUFRIEND_kbv tft; // Create an instance of the TFT display
 
 void setup() {
+  button1.pin = 23;
+  button2.pin = 25;
 
   tft.begin(); // Initialize TFT display
   tft.setRotation(3); // Set the screen rotation (0, 1, 2, or 3)
 
-  tft.fillScreen(bg_colour); // Fill the screen with a background color (optional)
+  tft.fillScreen(bgColour); // Fill the screen with a background color
 
-  tft.setTextColor(ILI9486_WHITE); // Set text color (optional)
+  tft.setTextColor(BLACK); // Set text color
   tft.setTextSize(2); // Set text size 
-  tft.setCursor(10, 10); // Set text cursor position (optional)
-  tft.println("Hello!"); // Print text on the screen (optional)
+  tft.setCursor(10, 10); // Set text cursor position
+  tft.println("Hello!"); // Print text on the screen
   delay(4000);
   // You can also draw shapes and graphics here
 }
 
 void loop() {
-  reading1 = digitalRead(button1);
-  reading2 = digitalRead(button2);
+  button1.currReading = digitalRead(button1.pin);
+  button2.currReading = digitalRead(button2.pin);
 
   switch (state){
     case CYCLE:
       if (isPressed(button1)){
-        state = temp_state;
+        state = tempState;
         if (state == STOPWATCH){
-          time = 0;
+          elapsedTime = 0;
         }
       }
-      elif (isPressed(button2)){
-        temp_state = (temp_state + 1) % NUM_STATES;
+      else if (isPressed(button2)){
+        tempState = (tempState + 1) % NUM_STATES;
       }
       break;
 
@@ -84,61 +91,68 @@ void loop() {
         break;
       }
 
+      //tft.drawBMP(coverImg, 10, 30) //insert cover image later
+      //insert song and artist info
+
+
       break;
 
     case STOPWATCH:
       if (isPressed(button1)){
-        if (time == 0){
+        if (elapsedTime == 0){
           state = CYCLE;
           break;
         }
         else{
-          time = 0;
+          elapsedTime  = 0;
           paused = true;
         }
       }
       else if (isPressed(button2)){
         paused = !paused;
+        if (!paused) {
+          startTime = millis(); // Record the start time when unpausing
+        }
       }
       if (!paused){
         increment_timer();
       }
-      tft.fillScreen(bg_colour);
-      ftf.println(time)
-
+      tft.fillScreen(bgColour);
+      tft.println(elapsedTime);
 
       break;
   }
 
-  prev_reading1 = reading1;
-  prev_reading2 = reading2;
+  button1.prevReading = button1.currReading;
+  button2.prevReading = button2.currReading;
   
 }
 
 
 
-bool isPressed(int button) {
-  int reading1 = digitalRead(button); // Read the button state
-
-
-  if (reading != lastButtonState) {
-    lastDebounceTime = millis(); // Save the last time the button state changed
+bool isPressed(Button& button) {
+  if (button.currReading != button.prevReading) {
+    button.lastDebounceTime = millis(); // Save the last time the button state changed
   }
 
-  if ((millis() - lastDebounceTime) > debounceDelay) {
+  if ((millis() - button.lastDebounceTime) > debounceDelay) {
     // If the button state has been stable for a while, it's a valid press
-    if (reading != buttonState) {
-      buttonState = reading; // Save the current button state
+    if (button.currState != button.currReading) {
+      button.currState = button.currReading; // Save the current button state
 
       // Check if the button is pressed (assuming LOW when pressed)
-      if (buttonState == LOW) {
-        // Perform your action here when the button is pressed
+      if (button.currState == LOW) {
         return true;
       }
     }
+  }
   return false;
 }
 
-void increment_timer(){
-
+void increment_timer() {
+  if (!paused) {
+    unsigned long currentTime = millis();
+    elapsedTime += (currentTime - startTime);
+    startTime = currentTime;
+  }
 }
