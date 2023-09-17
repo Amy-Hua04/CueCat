@@ -5,7 +5,7 @@
 // #include <TFT_PRINTGLUE.h>
 // #include <UTFTGLUE.h>
 
-#include <MCUFRIEND_kbv.h> // Include the MCUFRIEND_kbv library
+#include <MCUFRIEND_kbv.h>  // Include the MCUFRIEND_kbv library
 
 //For screen
 // #include <Adafruit_GFX.h>
@@ -42,14 +42,14 @@ Button button2;
 
 const unsigned long debounceDelay = 40;    // Debounce delay in milliseconds
 
-MCUFRIEND_kbv tft; // Create an instance of the TFT display
+MCUFRIEND_kbv tft;  // Create an instance of the TFT display
 
 void setup() {
   button1.pin = 23;
   button2.pin = 25;
 
-  tft.begin(); // Initialize TFT display
-  tft.setRotation(3); // Set the screen rotation (0, 1, 2, or 3)
+  tft.begin(tft.readID());         // Initialize TFT display
+  tft.setRotation(3);  // Set the screen rotation (0, 1, 2, or 3)
 
   tft.fillScreen(bgColour); // Fill the screen with a background color
 
@@ -65,7 +65,7 @@ void loop() {
   button1.currReading = digitalRead(button1.pin);
   button2.currReading = digitalRead(button2.pin);
 
-  switch (state){
+  switch (state) {
     case CYCLE:
       if (isPressed(button1)){
         state = tempState;
@@ -79,14 +79,14 @@ void loop() {
       break;
 
     case HOME:
-      if (isPressed(button1)){
+      if (isPressed(button1)) {
         state = CYCLE;
       }
-      
+
       break;
 
     case SPOTIFY:
-      if (isPressed(button1)){
+      if (isPressed(button1)) {
         state = CYCLE;
         break;
       }
@@ -107,25 +107,21 @@ void loop() {
           elapsedTime  = 0;
           paused = true;
         }
-      }
-      else if (isPressed(button2)){
+      } else if (isPressed(button2)) {
         paused = !paused;
         if (!paused) {
           startTime = millis(); // Record the start time when unpausing
         }
       }
-      if (!paused){
+      if (!paused) {
         increment_timer();
       }
       tft.fillScreen(bgColour);
       tft.println(elapsedTime);
 
-      break;
+        break;
   }
 
-  button1.prevReading = button1.currReading;
-  button2.prevReading = button2.currReading;
-  
 }
 
 
